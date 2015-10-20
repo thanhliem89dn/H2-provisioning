@@ -1,12 +1,12 @@
     - name: Stop Webdiscovery Container
       shell: docker stop webdiscovery
       ignore_errors: true
-      tags: 
+      tags:
        - webdiscovery
        - h2
        - stopdocker
 
-    - name: Remove webdiscovery Docker Container
+    - name: Remove Webdiscovery Docker Container
       shell: docker rm webdiscovery
       ignore_errors: yes
       tags:
@@ -14,9 +14,9 @@
        - h2
        - stopdocker
 
-    - name: Build Hlabs webdiscovery Docker Container
+    - name: Build H2 Webdiscovery Docker Container
       docker_image:
-        path: /h2/docker/images/web-discovery"
+        path: "/h2/docker/images/web-discovery"
         tag: "hailo/base"
         name: "webdiscovery"
         state: present
@@ -28,7 +28,7 @@
        - webdiscovery
        - h2
 
-    - name: Start H2labs webdiscovery docker Container
+    - name: Start H2 Webdiscovery docker Container
       docker:
         name: webdiscovery
         image: "webdiscovery:hailo/base"

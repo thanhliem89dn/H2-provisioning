@@ -1,7 +1,7 @@
     - name: Stop Cassandra Container
       shell: docker stop cassandra
       ignore_errors: true
-      tags: 
+      tags:
       #   - cassandra
        - infrastructure
        - stopdocker
@@ -9,7 +9,7 @@
     - name: Remove Cassandra Container
       shell: docker rm cassandra
       ignore_errors: true
-      tags: 
+      tags:
       # - cassandra
        - infrastructure
        - stopdocker
@@ -21,16 +21,16 @@
         name: cassandra
         state: present
         nocache: true
-      notify: 
+      notify:
        - list untagged images
        - debug
        - flush untagged images
-      tags: 
+      tags:
        - cassandra
        - infrastructure
 
     - name: Start Cassandra docker container
-      docker: 
+      docker:
         name: cassandra
         image: cassandra:hailo/base
         state: started
@@ -45,21 +45,21 @@
           - "9160:9160"
           - "9042:9042"
         privileged: yes
-        env: 
+        env:
             CASSANDRA_LISTEN_ADDRESS: 127.0.0.1
-      tags: 
+      tags:
         - cassandra
         - infrastructure
 
     - name: "Wait for Cassandra to intialize.."
-      pause: seconds=10
-      tags: 
+      pause: seconds=15
+      tags:
         - cassandra
         - infrastructure
 
     - name: Install H2 Schema
       command: "cqlsh -f schemas.cql chdir=/h2/docker/bootstrap"
-      tags: 
-        - cassandra 
+      tags:
+        - cassandra
         - infrastructure
-   
+
