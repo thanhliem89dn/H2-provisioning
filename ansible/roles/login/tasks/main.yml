@@ -1,0 +1,44 @@
+    - name: Stop H2 Login Container
+      shell: docker stop login
+      ignore_errors: true
+      tags:
+       - login
+       - h2
+       - stopdocker
+
+    - name: Remove H2 Login Container
+      shell: docker rm login
+      ignore_errors: yes
+      tags:
+       - login
+       - h2
+       - stopdocker
+
+    - name: Build H2 Login Container
+      docker_image:
+        path: "/h2/docker/images/login"
+        tag: "hailo/base"
+        name: "login"
+        state: present
+      notify: 
+       - list untagged images
+       - debug
+       - flush untagged images
+      tags:
+       - login
+       - h2
+
+    - name: Start H2 Login Container
+      docker:
+        name: login
+        image: "login:hailo/base"
+        links:
+         - rabbitmq
+         - zookeeper
+         - cassandra
+         - nsqd
+         - config
+      tags:
+       - login
+       - h2
+

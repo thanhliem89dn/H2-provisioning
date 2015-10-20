@@ -1,0 +1,44 @@
+    - name: Stop RabbitMQ Container
+      shell: docker stop rabbitmq
+      ignore_errors: true
+      tags:
+       - rabbitmq
+       - infrastructure
+       - stopdocker
+
+    - name: Remove RabbitMQ Container
+      shell: docker rm rabbitmq
+      ignore_errors: true
+      tags:
+       - rabbitmq
+       - infrastructure
+       - stopdocker
+
+    - name: Build RabbitMQ Container
+      docker_image:
+        path: "/h2/docker/images/rabbitmq/"
+        tag: "hailo/base"
+        name: "rabbitmq"
+        state: present
+      notify:
+       - list untagged images
+       - debug
+       - flush untagged images
+      tags:
+       - rabbitmq
+       - infrastructure
+
+    - name: Start RabbitMQ docker Container
+      docker:
+        name: rabbitmq
+        image: rabbitmq:hailo/base
+        state: started
+        ports:
+        - "15672:15672"
+        expose:
+        - "5672:5672"
+        volumes:
+        - data
+      tags:
+       - rabbitmq
+       - infrastructure

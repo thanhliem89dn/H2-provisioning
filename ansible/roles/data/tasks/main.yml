@@ -1,0 +1,28 @@
+  - name: Build Data Docker Container
+    docker_image:
+      path: "/h2/docker/images/data"
+      tag: hailo/base
+      name: data
+      state: present
+    notify: 
+      - list untagged images
+      - debug
+      - flush untagged images
+    tags:
+     - data
+     - common
+
+  - name: Start Data docker container
+    docker: 
+      name: data
+      image: "data:hailo/base"
+      state: started
+      command: /bin/true
+      volumes:
+        - "/h2/docker/images/data/cassandra:/opt/cassandra/data"
+        - "/h2/docker/images/data/elasticsearch:/var/lib/elasticsearch"
+        - "/h2/docker/images/data/rabbitmq/log:/data/log"
+        - "/h2/docker/images/data/mnesia:/data/mnesia"
+    tags:
+        - data
+        - common

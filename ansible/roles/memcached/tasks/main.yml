@@ -1,0 +1,28 @@
+- name: Stop Memcache Container
+  shell: docker stop memcache
+  ignore_errors: true
+  tags:
+   - memcache
+   - infrastructure
+   - stopdocker
+
+- name: Remove Memcache Container
+  shell: docker rm memcache
+  ignore_errors: yes
+  tags:
+   - memcache
+   - infrastructure
+   - stopdocker
+
+
+- name: Start Memcache Container
+  docker:
+    name: memcache
+    image: memcached:latest
+    state: started
+    ports:
+     - "11211:11211"
+     - "1211:1211"
+  tags:
+   - memcache
+   - infrastructure

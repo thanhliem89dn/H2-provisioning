@@ -1,0 +1,29 @@
+    - name: Stop NSQAdmin Container
+      shell: docker stop nsqadmin
+      ignore_errors: true
+      tags: 
+       - infrastructure
+       - nsqd
+       - stopdocker
+
+    - name: Remove NSQAdmin Container
+      shell: docker rm nsqadmin
+      ignore_errors: yes
+      tags: 
+       - nsqd
+       - infrastructure
+       - stopdocker
+
+    - name: Start NSQAdmin docker container
+      docker:
+        name: nsqadmin
+        image: nsqio/nsq
+        state: started
+        ports: 
+         - "4171:4171"
+        links:
+        - nsqlookupd
+        command: "/nsqadmin --lookupd-http-address=nsqlookupd:4160"
+      tags: 
+      - nsqd
+      - infrastructure

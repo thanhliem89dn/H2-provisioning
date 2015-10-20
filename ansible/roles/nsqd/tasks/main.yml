@@ -1,0 +1,33 @@
+    - name: Stop NSQD Container
+      shell: docker stop nsqd
+      ignore_errors: true
+      tags: 
+       - nsqd
+       - infrastructure
+       - stopdocker
+
+    - name: Remove NSQD Container
+      shell: docker rm nsqd
+      ignore_errors: yes
+      tags: 
+       - nsqd
+       - infrastructure
+       - stopdocker
+
+    - name: Start NSQD Container
+      docker:
+        name: nsqd
+        image: nsqio/nsq
+        state: started
+        ports:
+        - "4150:4150"
+        - "4151:4151"
+        expose:
+        - "4150:4150"
+        - "4151:4151"
+        links:
+        - "nsqlookupd"
+        command: "/nsqd --lookupd-tcp-address=nsqlookupd:4160"
+      tags:
+       - infrastructure
+       - nsqd

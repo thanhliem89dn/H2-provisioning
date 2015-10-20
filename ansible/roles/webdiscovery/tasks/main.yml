@@ -1,0 +1,42 @@
+    - name: Stop Webdiscovery Container
+      shell: docker stop webdiscovery
+      ignore_errors: true
+      tags: 
+       - webdiscovery
+       - h2
+       - stopdocker
+
+    - name: Remove webdiscovery Docker Container
+      shell: docker rm webdiscovery
+      ignore_errors: yes
+      tags:
+       - webdiscovery
+       - h2
+       - stopdocker
+
+    - name: Build Hlabs webdiscovery Docker Container
+      docker_image:
+        path: /h2/docker/images/web-discovery"
+        tag: "hailo/base"
+        name: "webdiscovery"
+        state: present
+      notify:
+       - list untagged images
+       - debug
+       - flush untagged images
+      tags:
+       - webdiscovery
+       - h2
+
+    - name: Start H2labs webdiscovery docker Container
+      docker:
+        name: webdiscovery
+        image: "webdiscovery:hailo/base"
+        links:
+         - rabbitmq
+         - zookeeper
+         - config
+      tags:
+       - webdiscovery
+       - h2
+

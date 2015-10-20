@@ -1,0 +1,43 @@
+    - name: Stop H2 Dashboards Container
+      shell: docker stop dashboards
+      ignore_errors: true
+      tags:
+       - dashboards
+       - h2
+       - stopdocker
+
+    - name: Remove H2 Dashboards Container
+      shell: docker rm dashboards
+      ignore_errors: yes
+      tags:
+       - dashboards
+       - h2
+       - stopdocker
+
+    - name: Build H2 Dashboards Container
+      docker_image:
+        path: "/h2/docker/images/dashboards"
+        tag: "hailo/base"
+        name: "dashboards"
+        state: present
+      notify:
+       - list untagged images
+       - debug
+       - flush untagged images
+      tags:
+       - dashboards
+       - h2
+
+    - name: Start H2 Dashboards Container
+      docker:
+       name: dashboards
+       image: "dashboards:hailo/base"
+       links:
+        - http2rpc
+       ports:
+        - "80:80"
+       state: started
+      tags:
+       - dashboards
+       - h2
+

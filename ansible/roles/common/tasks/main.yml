@@ -1,0 +1,85 @@
+    - name: Make Sure Ubuntu is Updated
+      apt: update_cache=yes upgrade=dist
+      tags:
+       - common 
+
+    - name: Install Essential Packages
+      apt: pkg={{ item }} state=present update_cache=yes
+      with_items:
+        - git
+        - curl
+        - python-pip
+        - python-dev
+        - build-essential
+      tags: 
+        - common  
+   
+    - name: Check if PIP installed
+      stat: path=/usr/local/bin/pip
+      register: pipinstalled
+      tags:
+        - common
+
+    - name: Install PIP
+      when: pipinstalled.stat.exists != true
+      command: easy_install pip
+      tags:
+        - common
+    
+    # check if dockerpy is installed soft fail if not
+
+    - name: Check if docker-Py is installed
+      shell: "pip list|grep docker-py && pip list|grep cqlsh"
+      register: dockerpy_installed
+      ignore_errors: true
+      tags: 
+        - common
+
+
+    - name: Install cqlsh and docker-py
+      pip: name={{ item }} state=present 
+      with_items:
+        - cqlsh
+        - docker-py
+      when: dockerpy_installed.rc != 0
+      tags: 
+        - common
+    
+    - name: Check if Docker has already been installed
+      stat: path=/usr/bin/docker
+      register: dockerinstalled
+      tags:
+        - common
+
+    - name: Install Docker
+      when: dockerinstalled.stat.exists != true
+      shell: curl -sSL https://get.docker.com/ | sh
+      tags:
+        - common
+
+    - name: Add Docker User to Ubuntu Group
+      user: name={{ user }} append=yes group=docker
+      tags:
+        - common
+
+  #  - name: Create H2 Directory
+  #    file: path={{H2_PATH}} state=directory mode=0777 
+  #    tags:
+  #      - common
+
+  #  - name: Clone H2 Repo
+  #    git: clone=yes dest={{H2_PATH}} repo=http://github.com/hailocab/h2.git accept_hostkey=yes update=no
+  #    tags:
+  #     - common
+
+     # Build container for base image in shell as docker_build ansible is not working as expected.     
+    - name: Build H2 Base Container Image
+      shell: "docker build --no-cache  -t hailo/base /h2/docker/images/base"
+      notify: 
+       - list untagged images
+       - debug
+       - flush untagged images 
+      tags:
+        - common
+        - base 
+    

@@ -1,0 +1,46 @@
+    - name: Stop H2 Config Container
+      shell: docker stop config
+      ignore_errors: true
+      tags: 
+       - config
+       - h2
+       - stopdocker
+   
+    - name: Remove H2 Config Container
+      shell: docker rm config
+      ignore_errors: true
+      tags: 
+       - config
+       - h2
+       - stopdocker    
+
+    - name: Build H2 Config Container
+      docker_image:
+        path: /h2/docker/images/config/"
+        tag: "hailo/base"
+        name: "config"
+        state: present
+        nocache: yes
+      notify: 
+       -  list untagged images
+       -  debug
+       -  flush untagged images
+      tags: 
+       - config
+       - h2 
+    
+    - name: Start H2 Config Container
+      docker: 
+       name: config
+       image: "config:hailo/base"
+       ports:
+        - "8097:8097"
+       links: 
+        - nsqd
+        - cassandra
+        - zookeeper
+        - rabbitmq 
+        - memcache
+      tags: 
+       - config
+       - h2

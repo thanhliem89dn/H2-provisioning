@@ -1,0 +1,11 @@
+ - name: list untagged images
+   shell: 'docker images -f "dangling=true" -q'
+   register: untagged
+
+ - name: flush untagged images 
+   shell: "docker rmi {{ item|default(['']) }}"
+   with_items: "{{ untagged.stdout_lines }}"
+   ignore_errors: true
+ 
+ - name: debug 
+   debug: var="{{untagged}}"

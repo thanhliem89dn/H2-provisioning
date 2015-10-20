@@ -1,0 +1,43 @@
+    - name: Stop H2 Binding Container
+      shell: docker stop binding
+      ignore_errors: true
+      tags: 
+       - binding
+       - h2
+       - stopdocker 
+  
+    - name: Remove H2 Binding Container
+      shell: docker rm binding
+      ignore_errors: yes
+      tags: 
+       - binding
+       - h2
+       - stopdocker 
+
+    - name: Build H2 Binding Container
+      docker_image:
+        path: "/h2/docker/images/binding"
+        tag: "hailo/base"
+        name: "binding"
+        state: present
+      notify: 
+        - list untagged images
+        - debug
+        - flush untagged images
+      tags: 
+       - binding 
+       - h2
+    
+    - name: Start H2 Binding Container
+      docker: 
+       name: binding
+       image: binding:hailo/base
+       state: started
+       links: 
+        - rabbitmq
+        - zookeeper
+        - config
+        - cassandra
+      tags:
+       - binding
+       - h2

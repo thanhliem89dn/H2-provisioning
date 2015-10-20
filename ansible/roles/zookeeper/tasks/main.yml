@@ -1,0 +1,29 @@
+    - name: Stop Zookeeper Container
+      shell: docker stop zookeeper
+      ignore_errors: true
+      tags:
+       - zookeeper
+       - infrastructure
+       - stopdocker
+
+    - name: Remove Zookeeper Container
+      shell: docker rm zookeeper
+      ignore_errors: true
+      tags:
+       - zookeeper
+       - infrastructure
+       - stopdocker
+
+    - name: Start Zookeeper docker container
+      docker:
+        name: zookeeper
+        image: mesoscloud/zookeeper
+        ports:
+          - "2181:2181"
+          - "2888:2888"
+          - "3888:3888"
+        expose:
+          - "2181"
+      tags:
+       - zookeeper
+       - infrastructure

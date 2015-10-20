@@ -1,0 +1,27 @@
+---
+- hosts: all
+  remote_user: vagrant
+  sudo: yes
+
+  vars:
+    user: vagrant
+    usergroup: vagrant
+
+  roles:
+    - common
+    - data
+    - cassandra
+    - memcached
+    - nsqlookupd
+    - nsqd
+    - nsqadmin
+    - rabbitmq
+    - zookeeper
+    - config
+    - discovery
+    - binding
+    - login
+    - http2rpc
+    - gateway
+    - webdiscovery
+    - dashboards

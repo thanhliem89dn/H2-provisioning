@@ -1,0 +1,32 @@
+    - name: Stop NSQLOOKUPD Container
+      shell: docker stop nsqlookupd
+      ignore_errors: true
+      tags: 
+       - infrastructure
+       - nsqlookupd
+       - stopdocker
+
+    - name: Remove NSQLOOKUPD Container
+      shell: docker rm nsqlookupd
+      ignore_errors: yes
+      tags: 
+       - infrastructure
+       - nsqlookupd
+       - stopdocker
+
+    - name: Start NSQLOOKUPD Container
+      docker:
+        name: nsqlookupd
+        image: nsqio/nsq
+        state: started
+        ports:
+          - "4160:4160"
+          - "4161:4161"
+        expose:
+          - "4160:4160"
+          - "4161:4161"
+        command: "/nsqlookupd"
+      tags: 
+       - nsqlookupd
+       - infrastructure
+

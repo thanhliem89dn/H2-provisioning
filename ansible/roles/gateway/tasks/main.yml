@@ -1,0 +1,44 @@
+    - name: Stop H2 Gateway Container
+      shell: docker stop gateway
+      ignore_errors: true
+      tags:
+       - gateway
+       - h2
+       - stopdocker
+
+    - name: Remove H2 Gateway Container
+      shell: docker rm gateway
+      ignore_errors: yes
+      tags:
+       - gateway
+       - h2 
+       - stopdocker
+
+    - name: Build H2 Gateway Container
+      docker_image:
+        path: "/h2/docker/images/gateway"
+        tag: "hailo/base"
+        name: "gateway"
+        state: present
+      notify:
+       - list untagged images
+       - debug
+       - flush untagged images
+      tags:
+       - gateway
+       - h2
+
+    - name: Start H2 Gateway Container
+      docker:
+       image: "gateway:hailo/base"
+       name: gateway
+       links:
+        - rabbitmq
+        - zookeeper
+        - config
+        - nsqd
+        - memcache
+      tags:
+       - gateway
+       - h2
+
