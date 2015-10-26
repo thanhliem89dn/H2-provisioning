@@ -2,6 +2,11 @@
 
 Automated provisioning of the H2 platform in a Virtualbox using Vagrant.
 
+# Requirements:
+
+vagrant 1.7.2 or greater
+virtualbox 4.3
+
 # Instructions
 ```
 git clone https://github.com/hailocab/H2-provisioning.git ~/h2-provisioning
